@@ -1,0 +1,49 @@
+html,
+body {
+    font-family: Roboto, sans-serif;
+    margin: 0;
+}
+html {
+    font-size: 15px;
+}
+
+h1,
+h2,
+h3 {
+    font-family: 'Source Code Pro', sans-serif;
+    margin-top: 0;
+}
+    h1 {
+        font-size: 1.8rem;
+    }
+    h2 {
+        font-size: 1.5rem;
+    }
+    h3 {
+        font-size: 1.4rem;
+    }
+
+header {
+    padding: 10px 0;
+    border-bottom: 1px solid #337ab7;
+    margin-bottom: 20px;
+}
+
+.alert {
+    margin-top: 10px;
+}
+    .alert li {
+        margin-bottom: 5px;
+    }
+    .alert em {
+        font-weight: 500;
+        font-style: normal;
+    }
+
+footer {
+    padding: 10px 0;
+    color: #aaa;
+    font-size: 11px;
+    font-style: italic;
+    border-top: 1px solid #e6e6e6;
+}

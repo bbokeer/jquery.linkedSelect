@@ -1,0 +1,309 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>jQuery Linked Selects Plugin</title>
+
+		<meta name="viewport" content="width=device-width,user-scalable=no" />
+		<meta name="robots" content="noindex, nofollow" />
+
+        <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic,500,500italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        <link href="example.css" rel="stylesheet" type="text/css">
+	</head>
+	<body>
+        <header>
+            <div class="container">
+                <h1 class="text-primary">jQuery Linked Selects Plugin</h1>
+            </div>
+        </header>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h2>Sample</h2>
+                </div>
+
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <select class="form-control" name="select-1"
+                                data-select-target="select-2"
+                                data-select-service="data/linked-select-filter.json|GET"
+                                data-select-service-asfilter="item.minVersion < this.value">
+                            <option value="">Please select</option>
+                            <option value="1.1">Please select 1.1</option>
+                            <option value="1.2">Please select 1.2</option>
+                            <option value="1.3">Please select 1.3</option>
+                        </select>
+                        <div class="alert alert-info">
+                            <ul class="list-unstyled">
+                                <li>
+                                    <em>name</em>="select-1"
+                                </li>
+                                <li>
+                                    <em>data-select-target</em>="select-2"
+                                </li>
+                                <li>
+                                    <em>data-select-service</em>="<a href="data/linked-select-filter.json">data/linked-select-filter.json</a>|GET"<br>
+                                </li>
+                                <li>
+                                    <em>data-select-service-asfilter</em>="item.minVersion < this.value"
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <select class="form-control" name="select-2"
+                                data-select-target="select-3"
+                                data-select-service="data/linked-select2.json|GET">
+                            <option value="">Please select</option>
+                        </select>
+                        <div class="alert alert-info">
+                            <ul class="list-unstyled">
+                                <li>
+                                    <em>name</em>="select-2"
+                                </li>
+                                <li>
+                                    <em>data-select-target</em>="select-3"
+                                </li>
+                                <li>
+                                    <em>data-select-service</em>="<a href="data/linked-select2.json">data/linked-select2.json</a>|GET"
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <select class="form-control" name="select-3">
+                            <option value="">Please select</option>
+                        </select>
+                        <div class="alert alert-info">
+                            <ul class="list-unstyled">
+                                <li>
+                                    <em>name</em>="select-3"
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <h2>Sample 2</h2>
+                </div>
+
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <select class="form-control" name="select-4"
+                                data-select-target="select-5"
+                                data-select-service="data/linked-select-filter.json|GET"
+                                data-select-service-asfilter="category">
+                            <option value="">Please select</option>
+                            <option value="1.1">Please select 1.1</option>
+                            <option value="1.2">Please select 1.2</option>
+                            <option value="1.3">Please select 1.3</option>
+                        </select>
+                        <div class="alert alert-info">
+                            <ul class="list-unstyled">
+                                <li>
+                                    <em>name</em>="select-4"
+                                </li>
+                                <li>
+                                    <em>data-select-target</em>="select-5"
+                                </li>
+                                <li>
+                                    <em>data-select-service</em>="<a href="data/linked-select-filter.json">data/linked-select-filter.json</a>|GET"
+                                </li>
+                                <li>
+                                    <em>data-select-service-asfilter</em>="category"
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <select class="form-control" name="select-5"
+                                data-select-target="select-6"
+                                data-select-service="data/linked-select2.json|GET">
+                            <option value="">Please select</option>
+                        </select>
+                        <div class="alert alert-info">
+                            <ul class="list-unstyled">
+                                <li>
+                                    <em>name</em>="select-5"
+                                </li>
+                                <li>
+                                    <em>data-select-target</em>="select-6"
+                                </li>
+                                <li>
+                                    <em>data-select-service</em>="<a href="data/linked-select2.json">data/linked-select2.json</a>|GET"
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <select class="form-control" name="select-6">
+                            <option value="">Please select</option>
+                        </select>
+                        <div class="alert alert-info">
+                            <ul class="list-unstyled">
+                                <li>
+                                    <em>name</em>="select-6"
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <h2>Sample 3</h2>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <select class="form-control" name="select-10"
+                                data-select-target="select-11"
+                                data-select-service="datas.level1">
+                            <option value="">Please select</option>
+                            <option value="1.1">Please select 1.1</option>
+                            <option value="1.2">Please select 1.2</option>
+                            <option value="1.3">Please select 1.3</option>
+                        </select>
+                        <div class="alert alert-info">
+                            <ul class="list-unstyled">
+                                <li>
+                                    <em>name</em>="select-10"
+                                </li>
+                                <li>
+                                    <em>data-select-target</em>="select-11"
+                                </li>
+                                <li>
+                                    <em>data-select-service</em>="datas.level1"
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <select class="form-control" name="select-11"
+                                data-select-target="select-12"
+                                data-select-service="datas.level2">
+                            <option value="">Please select</option>
+                        </select>
+                        <div class="alert alert-info">
+                            <ul class="list-unstyled">
+                                <li>
+                                    <em>name</em>="select-11"
+                                </li>
+                                <li>
+                                    <em>data-select-target</em>="select-12"
+                                </li>
+                                <li>
+                                    <em>data-select-service</em>="datas.level2"
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <select class="form-control" name="select-12"
+                                data-select-target="select-13"
+                                data-select-service="data/linked-select2.json|GET">
+                            <option value="">Please select</option>
+                        </select>
+                        <div class="alert alert-info">
+                            <ul class="list-unstyled">
+                                <li>
+                                    <em>name</em>="select-12"
+                                </li>
+                                <li>
+                                    <em>data-select-target</em>="select-13"
+                                </li>
+                                <li>
+                                    <em>data-select-service</em>=<a href="data/linked-select2.json">data/linked-select2.json</a>|GET"
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <select class="form-control" name="select-13">
+                            <option value="">Please select</option>
+                        </select>
+                        <div class="alert alert-info">
+                            <ul class="list-unstyled">
+                                <li>
+                                    <em>name</em>="select-13"
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <div class="container">
+                jQuery Linked Selects Plugin &middot; 2015-11-09 &middot; Copyright &copy;2016 Bogac Bokeer &middot; Licensed under the MIT license
+            </div>
+        </footer>
+
+        <script type="text/javascript" src="jquery-2.1.4.min.js"></script>
+        <script type="text/javascript" src="../jquery.linkedSelect.min.js"></script>
+        <script>
+            var datas = {
+                level1: [
+                    {
+                        "text": "Select 2.1",
+                        "value": "2.1"
+                    },
+                    {
+                        "text": "Select 2.2",
+                        "value": "2.2",
+                        "selected": true
+                    },
+                    {
+                        "text": "Select 2.3",
+                        "value": "2.3"
+                    },
+                    {
+                        "text": "Select 2.4",
+                        "value": "2.4"
+                    }
+                ],
+                level2: [
+                    {
+                        "text": "Select 3.1",
+                        "value": "3.1"
+                    },
+                    {
+                        "text": "Select 3.2",
+                        "value": "3.2"
+                    },
+                    {
+                        "text": "Select 3.3",
+                        "value": "3.3",
+                        "selected": true
+                    },
+                    {
+                        "text": "Select 3.4",
+                        "value": "3.4"
+                    }
+                ]
+            };
+
+            $(function() {
+                $.linkedSelect.init();
+            });
+        </script>
+	</body>
+</html>
