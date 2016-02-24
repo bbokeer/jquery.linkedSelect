@@ -1,7 +1,7 @@
 /*
  *
  * jQuery Linked Selects Plugin
- * 2016-01-09
+ * 2016-02-24
  *
  * Copyright 2016 Bogac Bokeer me@bokeer.net
  * Licensed under the MIT license
@@ -327,17 +327,25 @@
         },
         reset: function(selects) {
 
-            var base = this,
+           var base = this,
                 targets = {},
-                targetName;
+                targetName,
+                isValueOption = function() {
+                    return !!this.value && this.value.trim() !== '';
+                };
 
             selects.each(function() {
                 targetName = base.getSelectInfo($(this)).targetName;
                 targets[targetName] = $('select[name=' + targetName + ']');
             });
 
-            $.each(targets, function() {
-                base.emptySelect($(this), false);
+            $.each(targets, function(target) {
+
+                var options = $(this).find('option');
+
+                if ( options.length < 2 && !options.filter(isValueOption).length ) {
+                    base.emptySelect($(this), false);
+                }
             });
 
             targets = null;
