@@ -1,22 +1,17 @@
 {
     "result": true,
-	"items" : [
-		{
-			"text": "Select 3.1",
-            "value": "3.1"
-		},
-		{
-			"text": "Select 3.2",
-            "value": "3.2"
-		},
-		{
-			"text": "Select 3.3",
-            "value": "3.3",
-            "selected": true
-		},
-		{
-			"text": "Select 3.4",
-            "value": "3.4"
-		}
-    ]
+    "items": [{
+        "text": "Select 3.1",
+        "value": "3.1"
+    }, {
+        "text": "Select 3.2",
+        "value": "3.2"
+    }, {
+        "text": "Select 3.3",
+        "value": "3.3",
+        "selected": true
+    }, {
+        "text": "Select 3.4",
+        "value": "3.4"
+    }]
 }

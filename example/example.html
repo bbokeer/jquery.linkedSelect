@@ -302,7 +302,15 @@
         };
 
         $(function() {
-            $.linkedSelect.init();
+            $.linkedSelect.init({
+                service: {
+                    onBeforeSend: function(service, data, serviceUri, options, base) {
+                        if ( service === 'ajax' ) {
+                            data.requestTime = Date.now();
+                        }
+                    }
+                }
+            });
         });
     </script>
 </body>

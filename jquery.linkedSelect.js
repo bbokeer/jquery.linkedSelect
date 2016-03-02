@@ -1,9 +1,9 @@
 /*
  *
  * jQuery Linked Selects Plugin
- * 2016-02-24
+ * 2016-03-02
  *
- * Copyright 2016 Bogac Bokeer me@bokeer.net
+ * Copyright 2016 Bogac Bokeer
  * Licensed under the MIT license
  *
  */
@@ -93,6 +93,7 @@
             attrService: 'data-select-service',
             attrFilter: 'data-select-service-asfilter',
             method: 'POST',
+            onBeforeSend: function(service, data, serviceUri, options, base) {},
             onBeforeFill: function(source, target, options) {},
             onAfterFill: function(target, source, options) {}
         },
@@ -165,17 +166,34 @@
             var base = this,
                 extensions = base.extension[extensionType],
                 extData = null,
-                ext, fn;
+                ext, fn,
+                dataSend;
 
             for ( ext in extensions ) {
                 if ( extensions.hasOwnProperty(ext) && ext !== extensions._default ) {
-                    if ( $.isFunction(fn = extensions[ext]) && (extData = fn.apply(base, data)) ) {
+                    if ( $.isFunction(fn = extensions[ext])
+                            && (dataSend = applyData(ext, data))
+                            && (extData = fn.apply(base, dataSend || data)) ) {
                         return extData;
                     }
                 }
             }
 
-            return extensions[extensions._default].apply(base, data) || extData;
+            dataSend = applyData(extensions._default, data);
+
+            return extensions[extensions._default].apply(base, dataSend) || extData;
+
+
+            function applyData(ext, data) {
+
+                var dataSend = [data[0], $.extend(true, {}, data[1])];
+
+                var fns = base.settings[extensionType] || null;
+
+                fns && $.isFunction(fns.onBeforeSend) && fns.onBeforeSend(ext, dataSend[1], dataSend[0], $.extend(true, {}, base.settings), base);
+
+                return dataSend || data;
+            }
         },
         addOption: function(select, text, value, selected) {
 
@@ -327,7 +345,7 @@
         },
         reset: function(selects) {
 
-           var base = this,
+            var base = this,
                 targets = {},
                 targetName,
                 isValueOption = function() {

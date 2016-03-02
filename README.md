@@ -17,6 +17,15 @@
             $target;    // $Target select element (jQuery Object)
             $source;    // $Source select element (jQuery Object)
             data;       // Filtered Service Data
+        },
+        service: {
+            onBeforeSend: function(service, data, serviceUri, options, base) {
+                service;        // Service Name (Ex. 'ajax')
+                data;           // data to be sent
+                serviceUri;     // Service Url
+                options;        // Plugin options (Read Only)
+                base;           // Plugin Object
+            }
         }
     };
 
@@ -36,6 +45,18 @@
     <option value="1.2">Please select 1.2</option>
     <option value="1.3">Please select 1.3</option>
 </select>
+```
+
+```javascript
+$.linkedSelect.init({
+    service: {
+        onBeforeSend: function(service, data, serviceUri, options, base) {
+            if ( service === 'ajax' ) {
+                data.requestTime = Date.now();
+            }
+        }
+    }
+});
 ```
 
 ###Sample 2

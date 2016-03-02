@@ -1,41 +1,35 @@
 {
-    "result": true,
-	"items" : [
-		{
-			"text": "Select 2.1",
+      "result": true,
+      "items": [{
+            "text": "Select 2.1",
             "value": "2.1",
             "category": "1.1",
             "total": 101,
             "minVersion": 1.1
-		},
-		{
-			"text": "Select 2.2",
+      }, {
+            "text": "Select 2.2",
             "value": "2.2",
             "category": "1.2",
             "total": 50,
             "minVersion": 1.2,
             "selected": true
-		},
-		{
-			"text": "Select 2.3",
+      }, {
+            "text": "Select 2.3",
             "value": "2.3",
             "category": "1.1",
             "total": 120,
             "minVersion": 1.3
-		},
-		{
-			"text": "Select 2.4",
+      }, {
+            "text": "Select 2.4",
             "value": "2.4",
             "category": "1.2",
             "total": 110,
             "minVersion": 1.2
-		},
-		{
-			"text": "Select 2.5",
+      }, {
+            "text": "Select 2.5",
             "value": "2.5",
             "category": "1.3",
             "total": 20,
             "minVersion": 1.0
-		}
-    ]
+      }]
 }
