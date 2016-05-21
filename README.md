@@ -1,4 +1,5 @@
 #jQuery Linked Selects Plugin
+Chained Selects
 
 ## init
 ```js
