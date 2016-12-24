@@ -18,6 +18,7 @@
             <h1 class="text-primary">jQuery Linked Selects Plugin</h1>
         </div>
     </header>
+
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
@@ -250,7 +251,123 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <h2>Sample 4 (Mapping)</h2>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <select class="form-control" name="select-14"
+                            data-select-target="select-15"
+                            data-select-service="data/linked-select-map.json|GET"
+                            data-select-service-asfilter="@test"
+                            data-select-map="@test">
+                        <option value="">Please select</option>
+                        <option value="1.1">Please select 1.1</option>
+                        <option value="1.2">Please select 1.2</option>
+                        <option value="1.3">Please select 1.3</option>
+                    </select>
+                    <div class="alert alert-info">
+                        <ul class="list-unstyled">
+                            <li>
+                                <em>name</em>="select-14"
+                            </li>
+                            <li>
+                                <em>data-select-target</em>="select-15"
+                            </li>
+                            <li>
+                                <em>data-select-service</em>="<a href="data/linked-select-map.json">data/linked-select-map.json</a>|GET"<br>
+                            </li>
+                            <li>
+                                <em>data-select-service-asfilter</em>="@test"
+                                <code>
+'test': function(filter) {
+    return function filterTest(value, index, sourceData) {
+
+        var isValid = (value.id.split('.')[1] | 0) % 2;
+
+        return isValid;
+    };
+}
+                                </code>
+                            </li>
+                            <li>
+                                <em>data-select-map</em>="@test"
+                                <code>
+test: function(value) {
+    return {
+        text: value.title,
+        value: value.id
+    };
+}
+                                </code>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <select class="form-control" name="select-15"
+                            data-select-target="select-16"
+                            data-select-service="datas.level2">
+                        <option value="">Please select</option>
+                    </select>
+                    <div class="alert alert-info">
+                        <ul class="list-unstyled">
+                            <li>
+                                <em>name</em>="select-15"
+                            </li>
+                            <li>
+                                <em>data-select-target</em>="select-16"
+                            </li>
+                            <li>
+                                <em>data-select-service</em>="datas.level2"
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <select class="form-control" name="select-16"
+                            data-select-target="select-17"
+                            data-select-service="data/linked-select2.json|GET">
+                        <option value="">Please select</option>
+                    </select>
+                    <div class="alert alert-info">
+                        <ul class="list-unstyled">
+                            <li>
+                                <em>name</em>="select-16"
+                            </li>
+                            <li>
+                                <em>data-select-target</em>="select-17"
+                            </li>
+                            <li>
+                                <em>data-select-service</em>=<a href="data/linked-select2.json">data/linked-select2.json</a>|GET"
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <select class="form-control" name="select-17">
+                        <option value="">Please select</option>
+                    </select>
+                    <div class="alert alert-info">
+                        <ul class="list-unstyled">
+                            <li>
+                                <em>name</em>="select-17"
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
     <footer>
         <div class="container">
             jQuery Linked Selects Plugin &middot; 2015-11-09 &middot; Copyright &copy;2016 Bogac Bokeer &middot; Licensed under the MIT license
@@ -258,7 +375,7 @@
     </footer>
 
     <script type="text/javascript" src="jquery-2.1.4.min.js"></script>
-    <script type="text/javascript" src="../jquery.linkedSelect.min.js"></script>
+    <script type="text/javascript" src="../jquery.linkedSelect.js"></script>
     <script>
         var datas = {
             level1: [
@@ -302,6 +419,28 @@
         };
 
         $(function() {
+
+            $.linkedSelect.add({
+                filter: {
+                    'test': function(filter) {
+                        return function filterTest(value, index, sourceData) {
+
+                            var isValid = (value.id.split('.')[1] | 0) % 2;
+
+                            return isValid;
+                        };
+                    }
+                },
+                map: {
+                    'test': function mapTest(value) {
+                        return {
+                            text: value.title,
+                            value: value.id
+                        };
+                    }
+                }
+            });
+
             $.linkedSelect.init({
                 service: {
                     onBeforeSend: function(service, data, serviceUri, options, base) {

@@ -1,5 +1,7 @@
-#jQuery Linked Selects Plugin
-Chained Selects
+# jQuery Linked Selects Plugin
+Chained Select (Dropdown)
+
+*updated 2016-12-24*
 
 ## init
 ```js
@@ -33,9 +35,9 @@ Chained Selects
     $.linkedSelect.init(options);
 ```
 
-##Samples
+## Samples
 
-###Sample 1
+### Sample 1
 ```html
 <select class="form-control" name="select-1"
         data-select-target="select-2"
@@ -60,7 +62,7 @@ $.linkedSelect.init({
 });
 ```
 
-###Sample 2
+### Sample 2
 ```html
 <select class="form-control" name="select-4"
         data-select-target="select-5"
@@ -73,8 +75,7 @@ $.linkedSelect.init({
 </select>
 ```
 
-###
-Sample 3
+### Sample 3
 ```html
 <select class="form-control" name="select-10"
         data-select-target="select-11"
@@ -84,6 +85,46 @@ Sample 3
     <option value="1.2">Please select 1.2</option>
     <option value="1.3">Please select 1.3</option>
 </select>
+```
+
+### Sample 4 (Mapping)
+
+with named filter *(@test)* & map *(@test)*
+
+```html
+<select class="form-control" name="select-14"
+        data-select-target="select-15"
+        data-select-service="data/linked-select-map.json|GET"
+        data-select-service-asfilter="@test"
+        data-select-map="@test">
+    <option value="">Please select</option>
+    <option value="1.1">Please select 1.1</option>
+    <option value="1.2">Please select 1.2</option>
+    <option value="1.3">Please select 1.3</option>
+</select>
+```
+
+```javascript
+$.linkedSelect.add({
+    filter: {
+        'test': function(filter) {
+            return function filterTest(value, index, sourceData) {
+
+                var isValid = (value.id.split('.')[1] | 0) % 2;
+
+                return isValid;
+            };
+        }
+    },
+    map: {
+        'test': function mapTest(value) {
+            return {
+                text: value.title,
+                value: value.id
+            };
+        }
+    }
+});
 ```
 
 ---

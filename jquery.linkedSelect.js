@@ -1,7 +1,7 @@
 /*
  *
  * jQuery Linked Selects Plugin
- * 2016-03-02
+ * 2016-12-24
  *
  * Copyright 2016 Bogac Bokeer
  * Licensed under the MIT license
@@ -22,6 +22,8 @@
     }
 }(this, function($) {
     'use strict';
+
+    var PLUGIN_NAME = 'bbLinkedSelect';
 
     var isExists = (function() {
 
@@ -84,6 +86,9 @@
         },
         isString = function(variable) {
             return $.type(variable) === 'string';
+        },
+        hasOwn = function(obj, key) {
+            return Object.prototype.hasOwnProperty.call(obj, key);
         };
 
 
@@ -92,19 +97,20 @@
             attrTarget: 'data-select-target',
             attrService: 'data-select-service',
             attrFilter: 'data-select-service-asfilter',
+            attrMap: 'data-select-map',
             method: 'POST',
-            onBeforeSend: function(service, data, serviceUri, options, base) {},
-            onBeforeFill: function(source, target, options) {},
-            onAfterFill: function(target, source, options) {}
+            onBeforeSend: function(/* service, data, serviceUri, options, base */) {},
+            onBeforeFill: function(/* source, target, options */) {},
+            onAfterFill: function(/* target, source, options */) {}
         },
         extension: {
             service: {
                 _default: 'ajax',
-                variable: function(service, data) {
+                variable: function(service) {
 
                     // var base = this;
 
-                    if ( !isExists(service) ) {
+                    if ( !isExists(service.name) ) {
                         return false;
                     }
 
@@ -117,20 +123,18 @@
 
                     return p;
                 },
-                ajax: function(service, data) {
+                ajax: function(service) {
 
-                    // var base = this;
+                    var reqInfo = service.name.split('|');
 
-                    service = service.split('|');
-
-                    var serviceUrl = service[0].trim() || location.href,
-                        serviceMethod = service[1] || 'POST';
+                    var serviceUrl = reqInfo[0].trim() || location.href,
+                        serviceMethod = reqInfo[1] || 'POST';
 
                     return $.ajax({
                         url: serviceUrl,
                         type: serviceMethod,
                         dataType: 'json',
-                        data: data
+                        data: service.data
                     });
                 }
             },
@@ -138,10 +142,12 @@
                 _default: 'all',
                 filter1: function(filter) {
 
+                    filter = filter.name;
+
                     var self = $.linkedSelect,
                         filterFn = false;
 
-                    if ( /^[0-9a-z_]+$/i.test(filter) ) {
+                    if ( filter && /^[0-9a-z_]+$/i.test(filter) ) {
                         filterFn = function(item, index) {
                             return item[filter] === this.value || self.castData(this.value) === self.castData(item[filter]);
                         };
@@ -151,66 +157,110 @@
                 },
                 expressions: function(filter) {
 
-                    return new Function('item', 'index', 'return ' + filter);
+                    return filter.name ? new Function('item', 'index', 'return ' + filter.name) : false;
                 },
                 all: function(filter) {
 
                     return function() { return true; };
                 }
+            },
+            map: {
+                _default: 'asIs',
+                asIs: function(value) {
+                    return value;
+                }
             }
         },
-        getExtension: function(extensionType, data) {
+        applyData: function(ext, extInfo) {
 
-            data = data || null;
+            var base = this,
+                dataSend = $.extend(true, {}, extInfo),
+                fns = base.settings[extInfo.type] || null;
+
+            if ( dataSend.named ) {
+                dataSend.callName = dataSend.name;
+                dataSend.name = dataSend.named;
+            }
+
+            fns && $.isFunction(fns.onBeforeSend) && fns.onBeforeSend(ext, dataSend.data, dataSend.name, $.extend(true, {}, base.settings), base);
+
+            return dataSend || extInfo;
+        },
+        getExtData: function(ext, extensions, extInfo) {
+
+            var base = this,
+                fn, dataSend, extData;
+
+            if ( $.isFunction(fn = extensions[ext] ) ) {
+                if ( !extInfo.raw ) {
+                    dataSend = base.applyData(ext, extInfo);
+                    if ( extData = fn.call(base, dataSend || extInfo) ) {
+                        return extData;
+                    }
+                } else {
+                    return fn;
+                }
+            }
+
+            return null;
+        },
+        getExtension: function(extensionType, extInfo) {
+
+            extInfo = extInfo || null;
 
             var base = this,
                 extensions = base.extension[extensionType],
+                named = (extInfo && extInfo.name && extInfo.name[0] === '@') ? extInfo.name.substr(1) : false,
                 extData = null,
-                ext, fn,
-                dataSend;
+                ext;
+
+            extInfo.type = extensionType;
+            extInfo.named = named;
+
+            // Named Filter, starts with an '@'
+            if ( named ) {
+                if ( extData = base.getExtData(named, extensions, extInfo) ) {
+                    return extData;
+                }
+            }
 
             for ( ext in extensions ) {
-                if ( extensions.hasOwnProperty(ext) && ext !== extensions._default ) {
-                    if ( $.isFunction(fn = extensions[ext])
-                            && (dataSend = applyData(ext, data))
-                            && (extData = fn.apply(base, dataSend || data)) ) {
+                if ( hasOwn(extensions, ext) && ext !== extensions._default ) {
+                    if ( extData = base.getExtData(ext, extensions, extInfo) ) {
                         return extData;
                     }
                 }
             }
 
-            dataSend = applyData(extensions._default, data);
+            var dataSend = base.applyData(extensions._default, extInfo);
 
-            return extensions[extensions._default].apply(base, dataSend) || extData;
-
-
-            function applyData(ext, data) {
-
-                var dataSend = [data[0], $.extend(true, {}, data[1])];
-
-                var fns = base.settings[extensionType] || null;
-
-                fns && $.isFunction(fns.onBeforeSend) && fns.onBeforeSend(ext, dataSend[1], dataSend[0], $.extend(true, {}, base.settings), base);
-
-                return dataSend || data;
-            }
+            return extensions[extensions._default].call(base, dataSend) || extData;
         },
-        addOption: function(select, text, value, selected) {
+        addFilter: function(name, fn) {
 
-            value = value || '';
-            selected = selected || false;
+            return $.linkedSelect.extension.filter[name] = fn;
+        },
+        addMap: function(name, fn) {
 
-            var option = document.createElement('option');
-            option.text = text;
-            option.value = value;
+            return $.linkedSelect.extension.map[name] = fn;
+        },
+        add: function(types) {
 
-            if ( !!selected ) {
-                option.selected = true;
+            var base = this,
+                extensions = base.extension,
+                extensionType;
+
+            for ( extensionType in types ) {
+                if ( hasOwn(extensions, extensionType) && hasOwn(types, extensionType) ) {
+                    for ( name in types[extensionType] ) {
+                        if ( hasOwn(types[extensionType], name) ) {
+                            extensions[extensionType][name] = types[extensionType][name]
+                        }
+                    }
+                }
             }
 
-            select.appendChild(option);
-
-            return option;
+            return base.extension;
         },
         castData: function(value) {
 
@@ -236,6 +286,90 @@
             }
 
             return value;
+        },
+        getServiceData: function(serviceUri, data) {
+
+            return this.getExtension('service', {
+                name: serviceUri,
+                data: data
+            });
+        },
+        getFilter: function(value, filter, extraData) {
+
+            var base = this,
+                filterData = base.getExtension('filter', {
+                    name: filter
+                });
+
+            if ( !!filterData ) {
+                filterData.value = base.castData(value);
+                filterData.filter = filter;
+                filterData.extraData = extraData || null;
+                filterData = $.proxy(filterData, filterData);
+            }
+
+            return filterData;
+        },
+        getData: function(items, value, valueData, extraData) {
+
+            valueData = valueData || null;
+
+            if ( !valueData ) {
+                return items;
+            }
+
+            var base = this;
+
+            var results = items,
+                filterFn = base.getFilter(value, valueData.filter, extraData),
+                mapFn = base.getExtension('map', {
+                    name: valueData.map,
+                    raw: true
+                });
+
+            if ( filterFn ) {
+                results = results.filter(filterFn);
+            }
+
+            if ( mapFn ) {
+                results = results.map(mapFn);
+            }
+
+            return results;
+        },
+        getSelectInfo: function($select) {
+
+            if ( !$select ) {
+                return null;
+            }
+
+            var info = {
+                targetName: $select.attr(this.settings.attrTarget),
+                service: $select.attr(this.settings.attrService) ? $select.attr(this.settings.attrService) : false,
+                value: $select.val(),
+                $target: null
+            };
+
+            info.$target = $('select[name=' + info.targetName + ']');
+
+            return info;
+        },
+        addOption: function(select, text, value, selected) {
+
+            value = value || '';
+            selected = selected || false;
+
+            var option = document.createElement('option');
+            option.text = text;
+            option.value = value;
+
+            if ( !!selected ) {
+                option.selected = true;
+            }
+
+            select.appendChild(option);
+
+            return option;
         },
         emptySelect: function($select, defaultOption, loop) {
 
@@ -289,60 +423,6 @@
 
             base.emptySelect(base.getSelectInfo($target).$target, false, true);
         },
-        getData: function(items, value, filter, extraData) {
-
-            var base = this;
-
-            filter = filter || false;
-
-            if ( !filter ) {
-                return items;
-            }
-
-            var results = items,
-                filterFn = base.getFilter(value, filter, extraData);
-
-            if ( filterFn ) {
-                results = results.filter(filterFn);
-            }
-
-            return results;
-        },
-        getFilter: function(value, filter, extraData) {
-
-            var base = this,
-                filterData = base.getExtension('filter', [filter]);
-
-            if ( !!filterData ) {
-                filterData.value = base.castData(value);
-                filterData.filter = filter;
-                filterData.extraData = extraData || null;
-                filterData = $.proxy(filterData, filterData);
-            }
-
-            return filterData;
-        },
-        getSelectInfo: function($select) {
-
-            if ( !$select ) {
-                return null;
-            }
-
-            var info = {
-                targetName: $select.attr(this.settings.attrTarget),
-                service: $select.attr(this.settings.attrService) ? $select.attr(this.settings.attrService) : false,
-                value: $select.val(),
-                $target: null
-            };
-
-            info.$target = $('select[name=' + info.targetName + ']');
-
-            return info;
-        },
-        getServiceData: function(serviceUri, data) {
-
-            return this.getExtension('service', [serviceUri, data]);
-        },
         reset: function(selects) {
 
             var base = this,
@@ -374,44 +454,33 @@
         isFloat: isFloat,
         isString: isString,
 
-        init: function(opts) {
+        itemInit: function(select) {
 
-            var base = $.linkedSelect;
+            var base = this,
+                options = base.settings;
 
-            base.settings = $.extend({}, base.options, opts);
+            var $select = $(select),
+                selectInfo = base.getSelectInfo($select),
+                filter = $select.attr(options.attrFilter) || false,
+                map = $select.attr(options.attrMap) || false,
+                value = selectInfo.value;
 
-            $('[' + base.settings.attrTarget + ']').linkedSelect();
-        }
-    };
-    $.fn.linkedSelect = function() {
+            var extraData = {
+                source: $select,
+                target: selectInfo.$target,
+                service: selectInfo.service
+            };
 
-        var PLUGIN_NAME = 'bbLinkedSelect',
-            base = $.linkedSelect,
-            options = base.settings;
+            var valueData = ( !filter && !map ) ? null : {
+                filter: filter || false,
+                map: map || false
+            };
 
-        base.reset(this);
+            // TODO: Use delegation
+            $select.on('change', function(e) {
 
-        return this.not(PLUGIN_NAME + '-init').each(function() {
-
-            $(this).on('change', function(e) {
-
-                var $select = $(this),
-                    selectInfo = base.getSelectInfo($select),
-                    filter = $select.attr(options.attrFilter) || false,
-                    value = selectInfo.value;
-
-                if ( !filter || filter.trim() === '' ) {
-                    filter = false;
-                }
-
-                var extraData = {
-                    source: this,
-                    target: selectInfo.$target,
-                    service: selectInfo.service
-                };
-
-                if ( filter && $select.data(PLUGIN_NAME + '_filter') ) {
-                    var items = base.getData($select.data(PLUGIN_NAME + '_filter'), value, filter, extraData);
+                if ( valueData && $select.data(PLUGIN_NAME + '_filter') ) {
+                    var items = base.getData($select.data(PLUGIN_NAME + '_filter'), value, valueData, extraData);
                     base.fillData($select, selectInfo.$target, items);
                 } else {
                     base.getServiceData(selectInfo.service, {
@@ -421,15 +490,43 @@
                     }, options.method).done(function(data) {
                         if ( data.result ) {
                             var items = data.items;
-                            if ( filter ) {
+                            if ( valueData ) {
                                 $select.data(PLUGIN_NAME + '_filter', items);
-                                items = base.getData(items, value, filter, extraData);
+                                items = base.getData(items, value, valueData, extraData);
                             }
                             base.fillData($select, selectInfo.$target, items);
                         }
                     });
                 }
             }).addClass(PLUGIN_NAME + '-init');
+        },
+
+        setOptions: function(options) {
+
+            var base = $.linkedSelect;
+
+            base.settings = $.extend({}, base.options, options);
+
+            return base.settings;
+        },
+        init: function(opts) {
+
+            var base = $.linkedSelect;
+
+            base.setOptions(opts);
+
+            $('[' + base.settings.attrTarget + ']').linkedSelect();
+        }
+    };
+    $.fn.linkedSelect = function() {
+
+        var base = $.linkedSelect;
+
+        base.reset(this);
+
+        return this.not('.' + PLUGIN_NAME + '-init').each(function() {
+
+            base.itemInit(this);
         });
     };
 }));

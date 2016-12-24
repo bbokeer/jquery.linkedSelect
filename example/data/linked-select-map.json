@@ -1,0 +1,20 @@
+{
+    "result": true,
+    "items": [{
+        "id": "2.1",
+        "title": "Select 2.1"
+    }, {
+        "id": "2.2",
+        "title": "Select 2.2",
+        "selected": true
+    }, {
+        "id": "2.3",
+        "title": "Select 2.3"
+    }, {
+        "id": "2.4",
+        "title": "Select 2.4"
+    }, {
+        "id": "2.5",
+        "title": "Select 2.5"
+    }]
+}
