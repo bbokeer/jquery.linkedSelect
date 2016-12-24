@@ -224,8 +224,12 @@
                 }
             }
 
+            if ( extensionType === 'map' && !named ) {
+                return null;
+            }
+
             for ( ext in extensions ) {
-                if ( hasOwn(extensions, ext) && ext !== extensions._default ) {
+                if ( hasOwn(extensions, ext) && ext !== '_default' && ext !== extensions._default ) {
                     if ( extData = base.getExtData(ext, extensions, extInfo) ) {
                         return extData;
                     }
@@ -305,7 +309,7 @@
                 filterData.value = base.castData(value);
                 filterData.filter = filter;
                 filterData.extraData = extraData || null;
-                filterData = $.proxy(filterData, filterData);
+                filterData = $.proxy(filterData, extraData.source[0]);
             }
 
             return filterData;
